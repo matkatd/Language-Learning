@@ -11,6 +11,8 @@ import SwiftUI
     // MARK: - Properties
     private var learningModel: LanguageLearning = createLearningModel()
     
+    private var lessonPlan: LessonPlan = SpanishLessonPlan()
+    
     
     static func createLearningModel() -> LanguageLearning {
         var topics: [LanguageLearning.Topic] = []
@@ -20,14 +22,15 @@ import SwiftUI
                 LanguageLearning.Topic(
                     title: topic.rawValue,
                     lessonText: lessonTextByTopic[topic] ?? "",
-                    vocabulary: vocabularyByTopic[topic] ?? [:],
-                    quiz: quizzesByTopic[topic] ?? []))
+                    cards: createDeck(with: vocabularyByTopic[topic] ?? [:]),
+                    quiz: quizzesByTopic[topic] ?? []
+                ))
         }
         
         return LanguageLearning(languageLearningFactory: topics)
     }
     
-    private func createDeck(with vocabulary: VocabDictionary) -> [LanguageLearning.Card] {
+    private static func createDeck(with vocabulary: VocabDictionary) -> [LanguageLearning.Card] {
         var cards: [LanguageLearning.Card] = []
         for (word, definition) in vocabulary {
             cards.append(LanguageLearning.Card(isFaceUp: false, word: word, definition: definition))
@@ -40,47 +43,88 @@ import SwiftUI
    
     
     // MARK: - User Intents
-    func flipCard(card: LanguageLearning.Card) {
+    func flipCard(card: LanguageLearning.Card, topic: LanguageLearning.Topic) {
         withAnimation(.easeIn(duration: Constants.animationDuration)) {
-            learningModel.flipCard(card: card)
+            learningModel.flipCard(card: card, selectedTopic: topic)
         }
     }
     
-    
-    
-    func submitAnswer(question: LanguageLearning.QuizItem) {
+    func submitAnswer(question: LanguageLearning.QuizItem, topic: LanguageLearning.Topic) {
         withAnimation(.linear) {
-            learningModel.submitAnswer(question: question)
+            learningModel.submitAnswer(question: question, selectedTopic: topic)
         }
     }
     
-    func selectAnswer(question: LanguageLearning.QuizItem, answer: String) {
+    func selectAnswer(question: LanguageLearning.QuizItem, answer: String, topic: LanguageLearning.Topic) {
         withAnimation(.linear) {
-            learningModel.selectAnswer(question: question, answer: answer)
+            learningModel.selectAnswer(question: question, answer: answer, selectedTopic: topic)
         }
     }
-    
-    
-    func setSelectedTopic(topic: LanguageLearning.Topic ) {
-        learningModel.selectedTopic = topic
-        learningModel.cards = createDeck(with: topic.vocabulary)
-    }
+
     
     
     // MARK: - Model Access
-    
-    var topics: [LanguageLearning.Topic] {
-        learningModel.topics
+    var topics: [Language.Topic] {
+        lessonPlan.topics
     }
     
-    var selectedTopic: LanguageLearning.Topic? {
-        learningModel.selectedTopic
+    var languageName: String {
+        lessonPlan.languageName
     }
     
-    var vocabList: Array<LanguageLearning.Card>  {
-        learningModel.cards
+//    var topics: [LanguageLearning.Topic] {
+//        learningModel.topics
+//    }
+
+    
+    func progress(for title: String) -> Language.Progress {
+        if let progressRecord = lessonPlan.progress.first(where: { $0.topicTitle == title }) {
+            return progressRecord
+        }
+        let progressRecord = Language.Progress(topicTitle: title)
+        
+        lessonPlan.progress.append(progressRecord)
+        
+        return progressRecord
     }
     
+    func vocabList(for title: String) -> [LanguageLearning.Card] {
+        if let vocabList = learningModel.topics.first(where: { $0.title == title })?.cards {
+            return vocabList
+        }
+        return []
+    }
+    
+    
+    func topic(for title: String) -> LanguageLearning.Topic? {
+        if let topic = learningModel.topics.first(where: { $0.title == title }) {
+            return topic
+        }
+        return nil
+    }
+    
+    func quiz(for title: String) -> [LanguageLearning.QuizItem] {
+        if let quiz = learningModel.topics.first(where: { $0.title == title })?.quiz {
+            return quiz
+        }
+        return []
+    }
+    
+    func toggleLessonRead(for title: String) {
+        lessonPlan.toggleLessonRead(for: title)
+    }
+    
+    func toggleVocabularyStudied(for title: String) {
+        lessonPlan.toggleVocabularyStudied(for: title)
+    }
+    
+    func toggleQuizPassed(for title: String) {
+        lessonPlan.toggleQuizPassed(for: title)
+    }
+    
+    func setHighScore(for title: String, score: Int) {
+        lessonPlan.setHighScore(for: title, score: score)
+    }
     
     // MARK: - Constants
     
