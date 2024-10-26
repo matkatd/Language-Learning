@@ -9,10 +9,11 @@ import SwiftUI
 
 struct TrueFalse: View {
     let question: LanguageLearning.QuizItem
+    let topic: LanguageLearning.Topic
     
     var body: some View {
-        SelectButton(text: "True", question: question, isCorrectAnswer: question.correctAnswer == "True")
-        SelectButton(text: "False", question: question, isCorrectAnswer: question.correctAnswer == "False")
+        SelectButton(text: "True", topic: topic, question: question, isCorrectAnswer: question.correctAnswer == "True")
+        SelectButton(text: "False", topic: topic, question: question, isCorrectAnswer: question.correctAnswer == "False")
     }
 }
 

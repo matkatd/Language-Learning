@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SelectButton: View {
     let text: String
+    let topic: LanguageLearning.Topic
     let question: LanguageLearning.QuizItem
     
     @EnvironmentObject var learningController: LearningViewModel
@@ -35,7 +36,7 @@ struct SelectButton: View {
 
     var body: some View {
         Button(action: {
-            learningController.selectAnswer(question: question, answer: text)
+            learningController.selectAnswer(question: question, answer: text, topic: topic)
         }) {
             HStack {  
                 Text(text)

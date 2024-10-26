@@ -17,7 +17,7 @@ struct TopicLessonView: View {
             Spacer()
             VStack {
                 NavigationLink {
-                    FlashcardsScreen()
+                    FlashcardsScreen(topic: topic)
                 } label: {
                     Text("Practice with Flashcards")
                         .padding()
@@ -27,7 +27,7 @@ struct TopicLessonView: View {
                     .cornerRadius(8)
                     
                 NavigationLink {
-                    QuizScreen()
+                    QuizScreen(topic: topic)
                 } label: {
                     Text("Take the Quiz")
                         .padding()
@@ -40,9 +40,6 @@ struct TopicLessonView: View {
         }
         .navigationTitle("\(topic.title)")
         .padding()
-        .onAppear {
-            learningController.setSelectedTopic(topic: topic)
-        }
     }
         
 }

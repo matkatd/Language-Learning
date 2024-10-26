@@ -24,13 +24,20 @@ struct ContentView: View {
 }
 
 struct TopicCell: View {
+    @EnvironmentObject var learningController: LearningViewModel
+    
     let topic: LanguageLearning.Topic
     var body: some View {
         HStack {
             NavigationLink {
                 TopicLessonView(topic: topic)
             } label: {
-                Text(topic.title)
+                VStack(alignment: .leading) {
+                    Text(topic.title)
+                        .font(.headline)
+                    Text("Lesson read: \(learningController.progress(for: topic.title).lessonRead)")
+                        .font(.subheadline)
+                }
             }
         }
     }

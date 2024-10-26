@@ -12,16 +12,16 @@ import SwiftUI
 
 struct FlashcardsScreen: View {
     @EnvironmentObject var learningController: LearningViewModel
-    
+    let topic: LanguageLearning.Topic
     @State private var selectedTab = 0
     
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            ForEach(Array(learningController.vocabList.enumerated()), id: \.element) { index, card in
+            ForEach(Array(learningController.vocabList(for: topic.title).enumerated()), id: \.element) { index, card in
                 CardView(card: card)
                     .onTapGesture {
-                        learningController.flipCard(card: card)
+                        learningController.flipCard(card: card, topic: topic)
                     }
                 
                     .tag(index)
@@ -79,6 +79,6 @@ struct CardView: View {
 
 
 #Preview {
-    FlashcardsScreen()
+    FlashcardsScreen(topic: LanguageLearning.Topic(title: "test", lessonText: "lalalalalalalalalalalalal alalalalalalalalal lalalalalalalalalal", quiz: []))
     //topicForReview: LanguageLearning.Topic(title: "test", lessonText: "lalalalalalalalalalalalal alalalalalalalalal lalalalalalalalalal", vocabulary: ["hola": "hello", "adios": "goodbye"], quiz: [])
 }

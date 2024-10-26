@@ -10,11 +10,13 @@ import SwiftUI
 
 struct FillInTheBlank: View {
     let question: LanguageLearning.QuizItem
+    let topic: LanguageLearning.Topic
+    
     @EnvironmentObject var learningController: LearningViewModel
 
     @State var selectedOption: String = "" {
         didSet (newValue) {
-            learningController.selectAnswer(question: question, answer: newValue)
+            learningController.selectAnswer(question: question, answer: newValue, topic: topic)
         }
     }
     

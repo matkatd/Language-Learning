@@ -9,13 +9,13 @@ import SwiftUI
 
 struct MultipleChoice: View {
     let question: LanguageLearning.QuizItem
-
+    let topic: LanguageLearning.Topic
     
     var body: some View {
         if let answers = question.answers {
             ForEach(Array(answers.enumerated()), id: \.element) { index, answer in
                 HStack {
-                    SelectButton(text: "\(answer)",
+                    SelectButton(text: "\(answer)", topic: topic,
                                  question: question, isCorrectAnswer: question.correctAnswer == answer)
                 }
             }
