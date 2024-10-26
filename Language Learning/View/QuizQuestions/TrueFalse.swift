@@ -11,7 +11,8 @@ struct TrueFalse: View {
     let question: LanguageLearning.QuizItem
     
     var body: some View {
-        Text("True")
-        Text("False")
+        SelectButton(text: "True", question: question, isCorrectAnswer: question.correctAnswer == "True")
+        SelectButton(text: "False", question: question, isCorrectAnswer: question.correctAnswer == "False")
     }
 }
+

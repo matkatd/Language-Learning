@@ -11,29 +11,21 @@ import SwiftUI
 
 
 struct FlashcardsScreen: View {
-    let topicForReview: LanguageLearning.Topic
-    
-    @StateObject var flashcardReview: FlashcardReview
+    @EnvironmentObject var learningController: LearningViewModel
     
     @State private var selectedTab = 0
     
-    init(topicForReview: LanguageLearning.Topic) {
-        self.topicForReview = topicForReview
-        // Initialize flashcardReview with the topic's vocabulary
-        _flashcardReview = StateObject(wrappedValue: FlashcardReview(vocabulary: topicForReview.vocabulary))
-    }
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            ForEach(Array(flashcardReview.vocabList.enumerated()), id: \.element) { index, card in
+            ForEach(Array(learningController.vocabList.enumerated()), id: \.element) { index, card in
                 CardView(card: card)
-                    .transition(AnyTransition.offset(randomOffsetScreenLocation))
                     .onTapGesture {
-                        flashcardReview.flipCard(card: card)
+                        learningController.flipCard(card: card)
                     }
-                    
+                
                     .tag(index)
-                    
+                
             }
         }
         .padding()
@@ -52,13 +44,17 @@ struct FlashcardsScreen: View {
 }
 
 struct CardView: View {
-    let card: Flashcards.Card
+    let card: LanguageLearning.Card
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 Text(card.content)
                     .font(systemFont(for: geometry.size))
+                    .lineLimit(nil)
+                    .minimumScaleFactor(0.5)
+                    .multilineTextAlignment(.center)
+                    .padding()
             }
             .cardify(isFaceUp: card.isFaceUp)
             .frame(width: geometry.size.width / 1.5, height: geometry.size.height / 1.5, alignment: .center)
@@ -74,14 +70,15 @@ struct CardView: View {
     
     // MARK: - Drawing Constants
     private struct Constants {
-        static let aspectRatio: Double = 5.0 / 7.0
-        static let fontScaleFactor = 0.15
-        static let paddingScaleFactor = 0.04
+        static let aspectRatio: Double = 7.0 / 5.0
+        static let fontScaleFactor = 0.20
+        static let paddingScaleFactor = 0.01
     }
     
 }
 
 
 #Preview {
-    FlashcardsScreen(topicForReview: LanguageLearning.Topic(title: "test", lessonText: "lalalalalalalalalalalalal alalalalalalalalal lalalalalalalalalal", vocabulary: ["hola": "hello", "adios": "goodbye"], quiz: []))
+    FlashcardsScreen()
+    //topicForReview: LanguageLearning.Topic(title: "test", lessonText: "lalalalalalalalalalalalal alalalalalalalalal lalalalalalalalalal", vocabulary: ["hola": "hello", "adios": "goodbye"], quiz: [])
 }

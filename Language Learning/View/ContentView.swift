@@ -9,17 +9,17 @@ import SwiftUI
 
 
 struct ContentView: View {
-    let languageLearningViewModel: LearningViewModel
-    
+    @StateObject var learningController: LearningViewModel
     
     var body: some View {
         NavigationStack {
-            List(languageLearningViewModel.topics, id: \.self) { topic in
+            List(learningController.topics, id: \.self) { topic in
                 TopicCell(topic: topic)
             }
             .navigationTitle("Learn Spanish!")
             .listStyle(.plain)
         }
+        .environment(learningController)
     }
 }
 
@@ -36,31 +36,7 @@ struct TopicCell: View {
     }
 }
 
-struct TopicLessonView: View {
-    let topic: LanguageLearning.Topic
-
-    var body: some View {
-        VStack {
-            Text("\(topic.lessonText)")
-
-            NavigationLink {
-                FlashcardsScreen(topicForReview: topic)
-            } label: {
-                Text("Practice with Flashcards")
-            }
-                
-            NavigationLink {
-                QuizScreen(topic: topic )
-            } label: {
-                Text("Take the Quiz")
-            }
-        }
-        .navigationTitle("\(topic.title)")
-    }
-}
-
-
 
 #Preview {
-    ContentView(languageLearningViewModel: LearningViewModel())
+    ContentView(learningController: LearningViewModel())
 }

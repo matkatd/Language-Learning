@@ -14,7 +14,10 @@ struct Cardify: Animatable, ViewModifier {
     
     var animatableData: Double {
         get { rotation }
-        set { rotation = newValue }
+        set {
+            print(newValue)
+            rotation = newValue
+        }
     }
     
     init(isFaceUp: Bool) {
@@ -24,19 +27,25 @@ struct Cardify: Animatable, ViewModifier {
     var rotation: Double
     
     func body(content: Content) -> some View {
+        let gradient = Gradient(colors: [
+            Color(.learningBlue),
+            Color(.lightLearningBlue)
+        ])
+        
         GeometryReader { geometry in
             ZStack {
                 if isFaceUp {
                     RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.white)
-                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).stroke()
+                        .shadow(color: .gray, radius: 5, x: 0, y: 5)
                     content
-                        .opacity(rotation < 90 ? 1 : 0)  // Show content when face-up
+                        .opacity(isFaceUp ? 1 : 0)  // Show content when face-up
                 } else {
-                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(.gray)
-                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).stroke()
+                    RoundedRectangle(cornerRadius: cornerRadius(for: geometry.size)).fill(LinearGradient(gradient: gradient, startPoint: .top, endPoint: .bottom))
+                        .shadow(color: .gray, radius: 5, x: 0, y: 5)
+                    
                     content
                         .rotation3DEffect(.degrees(180), axis: (0, 1, 0)) // Fix upside-down issue
-                        .opacity(rotation >= 90 ? 1 : 0) // Show content when face-down
+                        .opacity(!isFaceUp ? 1 : 0) // Show content when face-down
                 }
             }
             .rotation3DEffect(Angle(degrees: rotation), axis: (0, 1, 0))
